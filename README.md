@@ -1,6 +1,6 @@
 # FERMAT
 
-**Format for Electronic Registry Manifest And Tracking**
+**Format for Electronic Registry Manifest Automation and Transfer**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
