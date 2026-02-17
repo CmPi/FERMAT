@@ -212,7 +212,7 @@ Community contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
 ### Minimum Conformance
 
 A conforming manifest MUST:
-- Include all required fields (manifest, header, documents)
+- Include all required fields (manifest, delivery, documents)
 - Use valid classification objects
 - Use RFC 3339 datetime format
 - Set `format` to `"fermat-manifest"`
