@@ -1,5 +1,9 @@
 # Classification Metadata Format
 
+Part of the FERMAT (Format for Electronic Registry Manifest Automation and Transfer) specification.
+
+---
+
 ## 1. Scope & Purpose
 
 This specification defines a portable, machine-readable format for expressing security classification metadata attached to resources such as documents, persons, datasets, or messages.
