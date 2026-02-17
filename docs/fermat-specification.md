@@ -56,7 +56,7 @@ The name emphasizes:
 
 | Term | Definition |
 |------|------------|
-| **Datapack** | A collection of documents transmitted as a unit |
+| **Delivery** | A collection of documents transmitted as a unit |
 | **Manifest** | Machine-readable metadata file describing a datapack |
 | **RCO** | Registry Control Officer - responsible for classified document registration |
 | **DMS** | Document Management System |
@@ -86,7 +86,7 @@ A FERMAT manifest consists of five top-level sections:
 
 ```
 manifest/           # Manifest metadata
-header/             # Delivery information
+delivery/           # Delivery information
 documents[]         # Array of document entries
 summary/            # Computed statistics
 integrity/          # Signature data
@@ -95,7 +95,7 @@ integrity/          # Signature data
 ### 3.1 Required Sections
 
 - `manifest` - REQUIRED
-- `header` - REQUIRED
+- `delivery` - REQUIRED
 - `documents` - REQUIRED (may be empty array)
 
 ### 3.2 Optional Sections
@@ -107,18 +107,20 @@ integrity/          # Signature data
 
 ## 4. Manifest Section
 
-Contains metadata about the manifest itself.
+Contains metadata about the manifest itself, including its classification (unclassified in general).
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `schema_version` | string | Yes | Schema version (semver format, current: "1.0.0") |
 | `id` | string | Yes | Unique manifest identifier |
 | `created` | datetime | Yes | Creation timestamp (RFC 3339) |
+| `created-by` | string | No | Tool, Product used to create the manifest |
 | `modified` | datetime | No | Last modification timestamp |
 | `format` | string | Yes | Must be `"fermat-manifest"` |
+| `classification` | object/string/null | No | **Manifest** classification - Structured classification object (see 5.1) |
 
 ### 4.1 Manifest ID Format
-
+M
 Recommended format: `MAN-YYYYMMDD-XXXXXXXX`
 
 Where:
@@ -130,9 +132,9 @@ Example: `MAN-20260128-A1B2C3D4`
 
 ---
 
-## 5. Header Section
+## 5. Delivery Section
 
-Contains information about the delivery.
+Contains information about the whole delivery.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -348,7 +350,7 @@ An array of document entries. Each entry describes one document in the datapack.
 |-------|------|----------|-------------|
 | `classification` | object/string/null | Yes | Document classification (follows Classification Metadata Format v1.0.0) |
 
-**Note:** The `classification` field for documents follows the same structure as the header classification (see Section 5.1). It can be:
+**Note:** The `classification` field for documents follows the same structure as the manifest and delivery classification (see Section 5.1). It can be:
 - A structured classification object (canonical form - RECOMMENDED)
 - A shorthand form with authority code
 - A simplified string (compatibility)
