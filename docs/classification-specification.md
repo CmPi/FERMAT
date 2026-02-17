@@ -1,15 +1,5 @@
 # Classification Metadata Format
 
-**Version:** 1.0.0  
-**Status:** Draft  
-**Last Updated:** 2026-02-14
-
-## Version History
-
-| Version | Date       | Changes                                      |
-| ------- | ---------- | -------------------------------------------- |
-| 1.0.0   | 2026-02-14 | Initial specification release                |
-
 ## 1. Scope & Purpose
 
 This specification defines a portable, machine-readable format for expressing security classification metadata attached to resources such as documents, persons, datasets, or messages.
@@ -60,6 +50,8 @@ The string value `"unknown"` indicates that the classification status cannot be 
 ```yaml
 classification: unknown
 ```
+
+Document elements without classification key shall be assumed as unknown classification
 
 **Use cases:**
 - Legacy documents without machine-readable classification metadata
