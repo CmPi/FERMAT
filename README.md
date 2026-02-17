@@ -55,7 +55,7 @@ documents:
 
 ### For Automated/Bulk Processing
 
-For large datapacks (10+ documents), use automation tools and libraries (see [Tools & Libraries](#tools--libraries)). Such tools could be more verbose to avoid any ambiguity:
+For large deliveries (10+ documents), use automation tools and libraries (see [Tools & Libraries](#tools--libraries)). Such tools could be more verbose to avoid any ambiguity:
 
 ```yaml
 manifest:
@@ -73,7 +73,7 @@ manifest:
 delivery:
   sender: "Your Organization"
   recipient: "Receiving Organization"
-  datapack_reference: "DP-2026-001"
+  reference: "DP-2026-001"
   title: "Quarterly Security Report"
   classification:
     authority: NATO
@@ -109,7 +109,7 @@ documents:
 
 ### Authority-agnostic, Multi-Authority Classification and Multi Classification 
 
-Support for multiple classification in a single datapack (each document has its own).
+Support for multiple classification in a single delivery (each document has its own).
 
 ### Security & Compliance
 
@@ -137,7 +137,7 @@ Detailed specifications are available in the [`docs/`](docs/) directory:
 
 ```
 ┌─────────────────┐
-│ Prepare Datapack│
+│ Prepare Delivery│
 │  - Collect docs │
 │  - Verify class.│
 └────────┬────────┘
