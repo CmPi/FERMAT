@@ -300,6 +300,8 @@ Common caveats across classification authorities:
 | Caveat      | Authority     | Description |
 |-------------|---------------|-------------|
 | `CRYPTO`    | NATO, US, FR, many | Cryptographic information/material |
+| `KRYPTO`    | DE            | Cryptographic information/material |
+| `ACSSI`     | FR            | Article Contôlé de la SSI |
 | `CCI`       | NATO, US      | Controlled Cryptographic Item |
 | `COMSEC`    | NATO, US      | Communications Security material |
 | `ATOMAL`    | NATO, EU      | Atomic/nuclear information |
