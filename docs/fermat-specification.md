@@ -57,13 +57,13 @@ The name emphasizes:
 | Term | Definition |
 |------|------------|
 | **Delivery** | A collection of documents transmitted as a unit |
-| **Manifest** | Machine-readable metadata file describing a datapack |
+| **Manifest** | Machine-readable metadata file describing a delivery |
 | **RCO** | Registry Control Officer - responsible for classified document registration |
 | **DMS** | Document Management System |
 | **Authority** | Classification authority (e.g., NATO, EU, national government) |
 | **Originator** | The entity (person, office, or organization) that creates or originally classifies information and retains control over its dissemination (see ORCON caveat) |
-| **Sender** | The organization physically transmitting the datapack; may differ from the document originator |
-| **Recipient** | The organization receiving the datapack |
+| **Sender** | The organization physically transmitting the delivery; may differ from the document originator |
+| **Recipient** | The organization receiving the delivery |
 | **Caveat** | Additional handling restriction or dissemination control |
 
 ### 2.1 Originator vs Sender
@@ -72,7 +72,7 @@ The name emphasizes:
 
 - **Originator**: The authority that created or originally classified the information. The originator retains control rights (especially with ORCON marking) and may not be the entity physically transmitting the document.
   
-- **Sender**: The entity physically transmitting the datapack in this specific transaction. The sender may be forwarding documents on behalf of the originator or may themselves be the originator.
+- **Sender**: The entity physically transmitting the delivery in this specific transaction. The sender may be forwarding documents on behalf of the originator or may themselves be the originator.
 
 **Example scenarios:**
 1. **Sender = Originator**: French intelligence directorate creates and sends a report directly to NATO
@@ -138,9 +138,9 @@ Contains information about the whole delivery.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `sender` | string | Yes | Organization physically transmitting the datapack |
-| `recipient` | string | Yes | Organization receiving the datapack |
-| `datapack_reference` | string | Yes | Unique datapack reference |
+| `sender` | string | Yes | Organization physically transmitting the delivery |
+| `recipient` | string | Yes | Organization receiving the delivery |
+| `reference` | string | Yes | Unique delivery reference |
 | `title` | string | No | Human-readable title |
 | `description` | string | No | Detailed description |
 | `classification` | object/string/null | No | Structured classification object (see 5.1) |
@@ -328,7 +328,7 @@ This critical caveat means the document originator retains control over further 
 
 ## 6. Documents Section
 
-An array of document entries. Each entry describes one document in the datapack.
+An array of document entries. Each entry describes one document in the delivery.
 
 ### 6.1 Document Fields
 
@@ -338,7 +338,7 @@ An array of document entries. Each entry describes one document in the datapack.
 |-------|------|----------|-------------|
 | `id` | string | Yes | Unique ID within manifest |
 | `filename` | string | Yes | Original filename |
-| `path` | string | No | Relative path within datapack |
+| `path` | string | No | Relative path within delivery |
 | `title` | string | Yes | Document title |
 | `description` | string | No | Document description |
 | `version` | string | No | Document version |
@@ -357,7 +357,7 @@ An array of document entries. Each entry describes one document in the datapack.
 - `null` (non-classified)
 - `"unknown"` (indeterminate status)
 
-Documents MAY have different classifications from the overall datapack classification.
+Documents MAY have different classifications from the overall delivery classification.
 
 #### Originator & Approval
 
@@ -370,7 +370,7 @@ Documents MAY have different classifications from the overall datapack classific
 | `approval_date` | date | No | Date of approval |
 | `approved` | boolean | No | Is approved for release |
 
-**Note on originator field:** This identifies who created or originally classified the document, which determines dissemination control rights (especially for ORCON-marked documents). This may differ from the datapack sender - for example, when NATO (sender) forwards a US-originated document marked with US ORCON.
+**Note on originator field:** This identifies who created or originally classified the document, which determines dissemination control rights (especially for ORCON-marked documents). This may differ from the sender - for example, when NATO (sender) forwards a US-originated document marked with US ORCON.
 
 #### File Information
 
@@ -435,12 +435,12 @@ Contains signature data for tamper detection.
 
 Default: `sha256-hmac`
 
-The signature is computed over the JSON-encoded manifest, header, and documents sections (excluding summary and integrity).
+The signature is computed over the JSON-encoded manifest, delivery, and documents sections (excluding summary and integrity).
 
 ### 8.2 Signature Computation
 
 ```
-data = JSON.stringify({manifest, header, documents})
+data = JSON.stringify({manifest, delivery, documents})
 signature = HMAC-SHA256(data, shared_secret)
 ```
 
@@ -473,11 +473,10 @@ Implementations SHOULD detect format from file extension:
 ### 10.1 Minimum Conformance
 
 A conforming manifest MUST:
-- Include all required fields in manifest, header, and documents sections
-- Use valid classification objects conforming to Classification Metadata Format v1.0.0
+- Include all required fields in manifest, delivery, and documents sections
+- Use valid classification objects conforming to Classification Metadata Format
 - Use RFC 3339 datetime format
 - Set `format` to `"fermat-manifest"`
-- Ensure `marking` fields contain only base classification markings (no caveats)
 
 ### 10.2 Full Conformance
 
@@ -494,7 +493,7 @@ A fully conforming implementation SHOULD:
 
 ## 11. Complete Example
 
-### 11.1 Multi-Authority Datapack
+### 11.1 Multi-Authority delivery
 
 ```yaml
 manifest:
@@ -503,10 +502,10 @@ manifest:
   created: "2026-02-14T10:30:00Z"
   format: fermat-manifest
 
-header:
+delivery:
   sender: "NATO ACT"
   recipient: "EU SATCEN"
-  datapack_reference: "DP-2026-001"
+  reference: "DP-2026-001"
   title: "Joint Intelligence Assessment"
   description: "Collaborative intelligence sharing under NATO-EU cooperation"
   classification:
@@ -516,7 +515,6 @@ header:
       name: North Atlantic Treaty Organization
     level: secret
     marking: NATO SECRET
-    caveats: [ATOMAL, BOHEMIA]
   transmission_method: secure_courier
   acknowledgment_required: true
 
@@ -535,7 +533,6 @@ documents:
     size_bytes: 2457600
     checksum_algorithm: sha256
     checksum: "a3b2c1d4e5f6789012345678901234567890abcdef1234567890abcdef123456"
-    
   - id: DOC-0002
     filename: "french_annex.pdf"
     title: "French National Contribution"
@@ -548,12 +545,10 @@ documents:
         name: France
       level: secret
       marking: SECRET
-      caveats: [CRYPTO]
     mime_type: application/pdf
     size_bytes: 1048576
     checksum_algorithm: sha256
     checksum: "b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3"
-    
   - id: DOC-0003
     filename: "us_technical_data.xlsx"
     title: "US Technical Analysis"
@@ -569,8 +564,9 @@ documents:
       caveats: [ORCON, "REL TO USA, GBR, CAN, AUS, NZL"]
     mime_type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
     size_bytes: 524288
-    checksum_algorithm: sha256
-    checksum: "c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4"
+    checksum:
+      algorithm: sha256
+      value: "c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4"
 
 summary:
   total_documents: 3
@@ -582,14 +578,12 @@ summary:
 
 integrity:
   algorithm: sha256-hmac
-  signature: "d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5"
+  value: "d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5"
   signed_at: "2026-02-14T10:35:00Z"
 ```
 
-**Note:** In this example, NATO ACT is the sender (physically transmitting the datapack), but DOC-0003 is US-originated and marked with ORCON, meaning further dissemination requires US approval. The originator fields clarify control rights.
+**Note:** In this example, NATO ACT is the sender, but DOC-0003 is US-originated and marked with ORCON, meaning further dissemination requires US approval. The originator fields clarify control rights.
 
 ---
 
 *FERMAT - Format for Electronic Registry Manifest Automation and Transfer*
-*Version 1.0.0*
-*© 2026 - Open Standard*
