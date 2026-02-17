@@ -37,10 +37,10 @@ For small deliveries (1-5 documents), you can create a FERMAT manifest manually 
 manifest:
   format: fermat-manifest
 
-header:
+delivery:
+  reference: "DP-2026-001"
   sender: "Your Organization"
   recipient: "Receiving Organization"
-  datapack_reference: "DP-2026-001"
   title: "Quarterly Security Report"
   classification: NATO RESTRICTED
 
@@ -63,8 +63,14 @@ manifest:
   id: MAN-20260214-A1B2C3D4
   created: "2026-02-14T10:30:00Z"
   format: fermat-manifest
+  encoding: utf-8
+  classification:
+    authority: NATO
+    level: unclassified
+    marking: NATO UNCLASSIFIED
+    caveats: null
 
-header:
+delivery:
   sender: "Your Organization"
   recipient: "Receiving Organization"
   datapack_reference: "DP-2026-001"
@@ -269,10 +275,4 @@ FERMAT is an open standard. See [LICENSE](LICENSE) for details.
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/your-org/fermat/issues)
-
-
----
-
-*FERMAT - Format for Electronic Registry Manifest Automation and Transfer*  
-*Making classified document transfer efficient, transparent, auditable, and interoperable*  
 
