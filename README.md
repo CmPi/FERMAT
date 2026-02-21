@@ -34,21 +34,27 @@ For small deliveries (1-5 documents), you can create a FERMAT manifest manually 
 2. **Edit with Notepad/TextEdit/vim** - the YAML format is human-readable. Here is a minimal example:
 
 ```yaml
+
 manifest:
   format: fermat-manifest
 
 delivery:
-  reference: "DP-2026-001"
-  sender: "Your Organization"
-  recipient: "Receiving Organization"
-  title: "Quarterly Security Report"
+  reference: DP-2026-001
+  sender: Your Organization
+  recipient: Receiving Organization
+  title: Quarterly Activity Report
   classification: NATO RESTRICTED
 
 documents:
-  - id: "reference of the document"
-    filename: "report_q1_2026.pdf"
-    title: "Q1 2026 Security Assessment"
+  - id: 2026-arp-001-nr
+    filename: report_q1_2026.pdf
+    title: Q1 2026 Activity Report
     classification: NATO RESTRICTED
+  - id: 2026-inv-002
+    filename: invoice_2026-01.pdf
+    title: Q1 2026 Activity Report Invoice
+    classification: ~
+
 ```
 
 3. **Save and transmit** with your documents according to approved procedures
@@ -58,10 +64,11 @@ documents:
 For large deliveries (10+ documents), use automation tools and libraries (see [Tools & Libraries](#tools--libraries)). Such tools could be more verbose to avoid any ambiguity:
 
 ```yaml
+
 manifest:
-  schema_version: "1.0.0"
+  schema_version: 1.0.0
   id: MAN-20260214-A1B2C3D4
-  created: "2026-02-14T10:30:00Z"
+  created: 2026-02-14T10:30:00Z
   format: fermat-manifest
   encoding: utf-8
   classification:
@@ -71,10 +78,10 @@ manifest:
     caveats: null
 
 delivery:
-  sender: "Your Organization"
-  recipient: "Receiving Organization"
-  reference: "DP-2026-001"
-  title: "Quarterly Security Report"
+  sender: Your Organization
+  recipient: Receiving Organization
+  reference: DP-2026-001
+  title: Quarterly Security Report
   classification:
     authority: NATO
     level: restricted
@@ -84,9 +91,9 @@ delivery:
   acknowledgment_required: false
 
 documents:
-  - id: "reference of the first document"
-    filename: "report_q1_2026.pdf"
-    title: "Q1 2026 Security Assessment"
+  - id: reference of the first document
+    filename: report_q1_2026.pdf
+    title: Q1 2026 Security Assessment
     classification:
       authority: NATO
       level: restricted
@@ -94,15 +101,16 @@ documents:
     mime_type: application/pdf
     size_bytes: 1048576
     checksum_algorithm: sha256
-    checksum: "a3b2c1d4e5f6...your_checksum_here"
-  - id: "reference of the second document"
-    filename: "communication_q1.pdf"
-    title: "Q1 2026 Communication flyer"
+    checksum: a3b2c1d4e5f6...your_checksum_here
+  - id: reference of the second document
+    filename: communication_q1.pdf
+    title: Q1 2026 Communication flyer
     classification: null
     mime_type: application/pdf
     size_bytes: 10485
     checksum_algorithm: sha256
-    checksum: "0226a3b2c1d4e5f6...your_checksum_here"
+    checksum: 0226a3b2c1d4e5f6...your_checksum_here
+
 ```
 
 ## Key Features
