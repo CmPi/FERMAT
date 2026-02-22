@@ -5,6 +5,10 @@
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/your-org/fermat)
 [![License](https://img.shields.io/badge/license-Open%20Standard-green.svg)](LICENSE)
 [![Specification](https://img.shields.io/badge/spec-stable-brightgreen.svg)](docs/fermat-specification-v1.0.0.md)
+[![YAML](https://img.shields.io/badge/YAML-format-yellow.svg)](https://yaml.org/)
+[![JSON](https://img.shields.io/badge/JSON-format-blue.svg)](https://json.org/)
+[![RFC](https://img.shields.io/badge/RFC-compliant-orange.svg)](https://datatracker.ietf.org/)
+[![ISO](https://img.shields.io/badge/ISO-compliant-purple.svg)](https://www.iso.org/)
 
 > A standardized manifest format for tracking classified document deliveries across multiple classification authorities (NATO, EU, national systems).
 
@@ -222,7 +226,7 @@ Community contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
 A conforming manifest MUST:
 - Include all required fields (manifest, delivery, documents)
 - Use valid classification objects
-- Use RFC 3339 datetime format
+- Use **RFC 3339** datetime format
 - Set `format` to `"fermat-manifest"`
 - Ensure marking fields contain only base **official** markings (no embedded caveats)
 
@@ -279,7 +283,7 @@ FERMAT is an open standard. See [LICENSE](LICENSE) for details.
 ### Normative References
 
 - **ISO 3166-1** - Country codes
-
+- **RFC 3339** - Dates format
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/your-org/fermat/issues)
