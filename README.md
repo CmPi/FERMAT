@@ -103,17 +103,21 @@ documents:
       level: restricted
       marking: NATO RESTRICTED
     mime_type: application/pdf
-    size_bytes: 1048576
-    checksum_algorithm: sha256
-    checksum: a3b2c1d4e5f6...your_checksum_here
+    size: 1048576
+    checksum:
+      algorithm: sha256
+      value: a3b2c1d4e5f6...your_checksum_here
   - id: reference of the second document
     filename: communication_q1.pdf
     title: Q1 2026 Communication flyer
     classification: null
     mime_type: application/pdf
-    size_bytes: 10485
-    checksum_algorithm: sha256
-    checksum: 0226a3b2c1d4e5f6...your_checksum_here
+    size:
+      unit: bytes
+      value: 10485
+    checksum
+      algorithm: sha256
+      value: 0226a3b2c1d4e5f6...your_checksum_here
 
 ```
 
