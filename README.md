@@ -144,8 +144,9 @@ Detailed specifications are available in the [`docs/`](docs/) directory:
 
 | Document | Description |
 |----------|-------------|
-| [FERMAT Specification v1.0.0](docs/fermat-specification.md) | Complete FERMAT manifest format specification |
-| [Classification Metadata Format v1.0.0](docs/classification-metadata-format-v1.0.0.md) | Referenced classification structure specification |
+| [FERMAT Specification](docs/fermat-specification.md) | Complete FERMAT manifest format specification |
+| [Classification Metadata Format](docs/classification-specification.md) | Referenced classification structure specification |
+| [Document Metadata Format](docs/document-specification.md) | Referenced document structure specification |
 
 ## Use Cases
 
