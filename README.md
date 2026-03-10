@@ -70,7 +70,7 @@ For large deliveries (10+ documents), use automation tools and libraries (see [T
 ```yaml
 
 manifest:
-  schema_version: 1.0.0
+  schema-version: 1.0.0
   id: MAN-20260214-A1B2C3D4
   created: 2026-02-14T10:30:00Z
   format: fermat-manifest
@@ -111,7 +111,7 @@ documents:
     filename: communication_q1.pdf
     title: Q1 2026 Communication flyer
     classification: null
-    mime_type: application/pdf
+    mime-type: application/pdf
     size:
       unit: bytes
       value: 10485
@@ -210,7 +210,7 @@ Automation tools SHOULD use JSON for known recipient having coompatible tools.
 ```json
 {
   "manifest": {
-    "schema_version": "1.0.0"
+    "schema-version": "1.0.0"
   }
 }
 ```
@@ -288,7 +288,16 @@ FERMAT is an open standard. See [LICENSE](LICENSE) for details.
 ### Normative References
 
 - **ISO 3166-1** - Country codes
-- **RFC 3339** - Dates format
+- **RFC 3339** - Date and time format
+- **RFC 4648** — Base16 (hex) and Base64 encoding
+- **RFC 2046** — MIME types
+- **RFC 5652** — Cryptographic Message Syntax (CMS) for digital signatures
+- **ISO 3166-1** — Country codes (alpha-2)
+- **ISO 639-1** — Language codes
+- **YAML 1.2**
+- **JSON Schema draft-07** - JSON/YAML Validation schema definition
+- **kebab-case** - all keys naming
+
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/your-org/fermat/issues)
