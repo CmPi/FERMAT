@@ -111,7 +111,7 @@ Contains metadata about the manifest itself, including its classification (uncla
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `schema_version` | string | Yes | Schema version (semver format, current: "1.0.0") |
+| `schema-version` | string | Yes | Schema version (semver format, current: "1.0.0") |
 | `id` | string | Yes | Unique manifest identifier |
 | `created` | datetime | Yes | Creation timestamp (RFC 3339) |
 | `created-by` | string | No | Tool, Product used to create the manifest |
@@ -144,8 +144,8 @@ Contains information about the whole delivery.
 | `title` | string | No | Human-readable title |
 | `description` | string | No | Detailed description |
 | `classification` | object/string/null | No | Structured classification object (see 5.1) |
-| `transmission_method` | string | No | Method of transmission |
-| `acknowledgment_required` | boolean | No | Default: false (see 5.3) |
+| `transmission-method` | string | No | Method of transmission |
+| `acknowledgment-required` | boolean | No | Default: false (see 5.3) |
 
 ### 5.1 Classification Object
 
@@ -364,10 +364,10 @@ Documents MAY have different classifications from the overall delivery classific
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `originator` | string | No | Person or office that created/originally classified the document |
-| `originator_organization` | string | No | Organization of the originator (may differ from sender) |
-| `approval_status` | string | No | pending/approved/rejected/withdrawn |
-| `approval_authority` | string | No | Approving person/entity |
-| `approval_date` | date | No | Date of approval |
+| `originator-organization` | string | No | Organization of the originator (may differ from sender) |
+| `approval-status` | string | No | pending/approved/rejected/withdrawn |
+| `approval-authority` | string | No | Approving person/entity |
+| `approval-date` | date | No | Date of approval |
 | `approved` | boolean | No | Is approved for release |
 
 **Note on originator field:** This identifies who created or originally classified the document, which determines dissemination control rights (especially for ORCON-marked documents). This may differ from the sender - for example, when NATO (sender) forwards a US-originated document marked with US ORCON.
@@ -376,9 +376,9 @@ Documents MAY have different classifications from the overall delivery classific
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `mime_type` | string | No | MIME type |
-| `document_type` | string | No | Business document type |
-| `size_bytes` | integer | No | File size in bytes |
+| `mime-type` | string | No | MIME type |
+| `document-type` | string | No | Business document type |
+| `size-bytes` | integer | No | File size in bytes |
 | `created` | datetime | No | File creation time |
 | `modified` | datetime | No | File modification time |
 
@@ -386,16 +386,16 @@ Documents MAY have different classifications from the overall delivery classific
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `checksum_algorithm` | string | No | Hash algorithm (default: sha256) |
+| `checksum-algorithm` | string | No | Hash algorithm (default: sha256) |
 | `checksum` | string | No | File checksum (hex) |
 
 #### References
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `reference_number` | string | No | External reference number |
+| `reference-number` | string | No | External reference number |
 | `supersedes` | string | No | Reference to superseded document |
-| `related_documents` | array | No | Related document references |
+| `related-documents` | array | No | Related document references |
 
 ### 6.2 Document ID Format
 
@@ -413,9 +413,9 @@ Auto-computed statistics about the delivery.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `total_documents` | integer | Number of documents |
-| `total_size_bytes` | integer | Total size of all documents |
-| `classification_breakdown` | object | Count per classification level |
+| `total-documents` | integer | Number of documents |
+| `total-size-bytes` | integer | Total size of all documents |
+| `classification-breakdown` | object | Count per classification level |
 
 This section SHOULD be computed automatically when saving.
 
@@ -429,7 +429,7 @@ Contains signature data for tamper detection.
 |-------|------|-------------|
 | `algorithm` | string | Signature algorithm |
 | `signature` | string | HMAC signature (hex) |
-| `signed_at` | datetime | Signature timestamp |
+| `signed-at` | datetime | Signature timestamp |
 
 ### 8.1 Signature Algorithm
 
@@ -458,7 +458,7 @@ signature = HMAC-SHA256(data, shared_secret)
 
 - UTF-8 encoding
 - Comments allowed (ignored by parsers)
-- File extension: `.yaml`, `.yml`, or `.fermat.yaml`
+- File extension: `.yaml`, `.yml`, `.fermat.yaml` or `.fermat.yml`
 
 ### 9.3 Format Detection
 
@@ -497,7 +497,7 @@ A fully conforming implementation SHOULD:
 
 ```yaml
 manifest:
-  schema_version: "1.0.0"
+  schema-version: "1.0.0"
   id: MAN-20260214-A1B2C3D4
   created: "2026-02-14T10:30:00Z"
   format: fermat-manifest
@@ -523,15 +523,15 @@ documents:
     filename: "assessment_report.pdf"
     title: "Intelligence Assessment Report"
     originator: "NATO Intelligence Division"
-    originator_organization: "NATO"
+    originator-organization: "NATO"
     classification:
       authority: NATO
       level: secret
       marking: NATO SECRET
       caveats: [ATOMAL]
-    mime_type: application/pdf
-    size_bytes: 2457600
-    checksum_algorithm: sha256
+    mime-type: application/pdf
+    size-bytes: 2457600
+    checksum-algorithm: sha256
     checksum: "a3b2c1d4e5f6789012345678901234567890abcdef1234567890abcdef123456"
   - id: DOC-0002
     filename: "french_annex.pdf"
@@ -545,9 +545,9 @@ documents:
         name: France
       level: secret
       marking: SECRET
-    mime_type: application/pdf
-    size_bytes: 1048576
-    checksum_algorithm: sha256
+    mime-type: application/pdf
+    size-bytes: 1048576
+    checksum-algorithm: sha256
     checksum: "b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3"
   - id: DOC-0003
     filename: "us_technical_data.xlsx"
@@ -562,15 +562,15 @@ documents:
       level: secret
       marking: SECRET
       caveats: [ORCON, "REL TO USA, GBR, CAN, AUS, NZL"]
-    mime_type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-    size_bytes: 524288
+    mime-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    size-bytes: 524288
     checksum:
       algorithm: sha256
       value: "c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4"
 
 summary:
-  total_documents: 3
-  total_size_bytes: 4030464
+  total-documents: 3
+  total-size-bytes: 4030464
   classification_breakdown:
     NATO_secret: 1
     FR_secret: 1
@@ -579,7 +579,7 @@ summary:
 integrity:
   algorithm: sha256-hmac
   value: "d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5"
-  signed_at: "2026-02-14T10:35:00Z"
+  signed-at: "2026-02-14T10:35:00Z"
 ```
 
 **Note:** In this example, NATO ACT is the sender, but DOC-0003 is US-originated and marked with ORCON, meaning further dissemination requires US approval. The originator fields clarify control rights.
