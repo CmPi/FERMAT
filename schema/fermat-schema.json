@@ -1,3 +1,572 @@
 {
-  
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/CmPi/FERMAT/main/schema/fermat-schema.json",
+  "title": "FERMAT Manifest",
+  "description": "Format for Electronic Registry Manifest Automation and Transfer — v1.0.0",
+  "type": "object",
+  "required": ["manifest", "delivery", "documents"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest": {
+      "description": "Metadata about the manifest itself.",
+      "type": "object",
+      "required": ["schema-version", "id", "created", "format"],
+      "additionalProperties": true,
+      "properties": {
+        "schema-version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "FERMAT schema version in semver format.",
+          "examples": ["1.0.0"]
+        },
+        "id": {
+          "type": "string",
+          "description": "Unique manifest identifier. Recommended format: MAN-YYYYMMDD-XXXXXXXX.",
+          "pattern": "^MAN-\\d{8}-[0-9A-Fa-f]{8}$",
+          "examples": ["MAN-20260214-A1B2C3D4"]
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Manifest creation timestamp (RFC 3339)."
+        },
+        "modified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modification timestamp (RFC 3339)."
+        },
+        "created-by": {
+          "type": "string",
+          "description": "Tool or product used to create the manifest."
+        },
+        "format": {
+          "type": "string",
+          "const": "fermat-manifest",
+          "description": "Fixed format identifier."
+        },
+        "classification": {
+          "$ref": "#/$defs/classification",
+          "description": "Classification of the manifest itself. Typically null or unclassified."
+        }
+      }
+    },
+
+    "delivery": {
+      "description": "Information about the document delivery.",
+      "type": "object",
+      "required": ["sender", "recipient", "reference"],
+      "additionalProperties": true,
+      "properties": {
+        "sender": {
+          "type": "string",
+          "description": "Organization physically transmitting the delivery. May differ from document originator."
+        },
+        "recipient": {
+          "type": "string",
+          "description": "Organization receiving the delivery."
+        },
+        "reference": {
+          "type": "string",
+          "description": "Unique delivery reference identifier.",
+          "examples": ["DP-2026-001"]
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable title of the delivery."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the delivery."
+        },
+        "classification": {
+          "$ref": "#/$defs/classification",
+          "description": "Overall classification of the delivery."
+        },
+        "transmission-method": {
+          "type": "string",
+          "description": "Method used to transmit the delivery.",
+          "examples": [
+            "secure_courier",
+            "encrypted_transfer",
+            "diplomatic_pouch",
+            "approved_network",
+            "hand_delivery"
+          ]
+        },
+        "acknowledgment-required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether a counter-signed receipt is required. SHOULD be set based on classification authority and level."
+        }
+      }
+    },
+
+    "documents": {
+      "description": "Array of document entries. Each entry describes one file in the delivery.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/document"
+      }
+    },
+
+    "summary": {
+      "description": "Auto-computed delivery statistics. SHOULD be computed automatically when saving.",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "total-documents": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of documents in the delivery."
+        },
+        "total-size-bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Sum of all document file sizes in bytes."
+        },
+        "classification-breakdown": {
+          "type": "object",
+          "description": "Count of documents per classification level, keyed by authority_level (e.g. 'NATO-secret').",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+
+    "integrity": {
+      "description": "Manifest-level HMAC signature for tamper detection. Recommended for classified deliveries. Computed over JSON-encoded manifest, delivery, and documents sections.",
+      "type": "object",
+      "required": ["algorithm", "value", "signed-at"],
+      "additionalProperties": true,
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "description": "Signature algorithm used.",
+          "examples": ["sha256-hmac"]
+        },
+        "value": {
+          "type": "string",
+          "description": "Hex-encoded HMAC value (RFC 4648 Base16).",
+          "pattern": "^[0-9a-fA-F]+$"
+        },
+        "signed-at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the signature was computed (RFC 3339)."
+        }
+      }
+    }
+
+  },
+
+  "$defs": {
+
+    "document": {
+      "description": "A single document entry within a FERMAT delivery.",
+      "type": "object",
+      "required": ["id", "filename", "classification"],
+      "additionalProperties": true,
+      "properties": {
+
+        "id": {
+          "type": "string",
+          "description": "Unique document identifier within the manifest. Recommended format: DOC-NNNN.",
+          "pattern": "^DOC-\\d{4}$",
+          "examples": ["DOC-0001"]
+        },
+        "filename": {
+          "type": "string",
+          "description": "Original filename including extension. MUST NOT contain path separators.",
+          "pattern": "^[^/\\\\]+\\.[a-zA-Z0-9]+$",
+          "examples": ["report_q1_2026.pdf"]
+        },
+        "path": {
+          "type": "string",
+          "description": "Relative path of the file within the delivery package."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable document title."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the document content."
+        },
+
+        "classification": {
+          "$ref": "#/$defs/classification",
+          "description": "Document classification. MAY differ from the delivery classification."
+        },
+
+        "version": {
+          "type": "string",
+          "description": "Document version identifier.",
+          "examples": ["1.0", "2.3.1"]
+        },
+        "revision": {
+          "type": "string",
+          "description": "Revision identifier.",
+          "examples": ["A", "Rev3", "draft-02"]
+        },
+        "language": {
+          "type": "string",
+          "description": "Primary language of the document (ISO 639-1 two-letter code).",
+          "pattern": "^[a-z]{2}$",
+          "examples": ["en", "fr", "de"]
+        },
+
+        "reference-number": {
+          "type": "string",
+          "description": "External reference number (e.g. from originating DMS)."
+        },
+        "supersedes": {
+          "type": "string",
+          "description": "Reference number or ID of the document this one supersedes."
+        },
+        "related-documents": {
+          "type": "array",
+          "description": "References to related documents.",
+          "items": { "type": "string" }
+        },
+
+        "author": {
+          "type": "string",
+          "description": "Person who authored the document."
+        },
+        "author-organization": {
+          "type": "string",
+          "description": "Organization of the author."
+        },
+        "originator": {
+          "type": "string",
+          "description": "Person or office that created or originally classified the document. Determines dissemination control rights (especially for ORCON). May differ from sender."
+        },
+        "originator-organization": {
+          "type": "string",
+          "description": "Organization of the originator. May differ from the sender organization."
+        },
+
+        "approval": {
+          "description": "Approval record for this document.",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "date",
+              "description": "Date of approval (RFC 3339 date)."
+            },
+            "status": {
+              "type": "string",
+              "enum": ["pending", "approved", "rejected", "withdrawn"],
+              "description": "Approval lifecycle status."
+            },
+            "authority": {
+              "description": "Entity that approved the document.",
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "person": {
+                  "type": "string",
+                  "description": "Name of the approving person."
+                },
+                "organization": {
+                  "type": "string",
+                  "description": "Organization of the approving authority."
+                },
+                "function": {
+                  "type": "string",
+                  "description": "Role or function of the approving authority.",
+                  "examples": ["RCO", "Chief Security Officer", "Document Controller"]
+                }
+              }
+            }
+          }
+        },
+
+        "format": {
+          "description": "File format metadata.",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "mime-type": {
+              "type": "string",
+              "description": "MIME type of the file (RFC 2046).",
+              "examples": [
+                "application/pdf",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "description": "Business document type.",
+              "examples": ["report", "annex", "invoice", "technical-data", "assessment"]
+            },
+            "page-count": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Number of pages in the document."
+            }
+          }
+        },
+
+        "size-bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "File size in bytes."
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "File creation timestamp (RFC 3339)."
+        },
+        "modified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "File last modification timestamp (RFC 3339)."
+        },
+
+        "checksum": {
+          "description": "Cryptographic hash for file integrity verification.",
+          "type": "object",
+          "required": ["algorithm", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "algorithm": {
+              "type": "string",
+              "description": "Hash algorithm used.",
+              "examples": ["sha256", "sha512", "sha3-256"]
+            },
+            "value": {
+              "type": "string",
+              "description": "Hex-encoded hash value (RFC 4648 Base16).",
+              "pattern": "^[0-9a-fA-F]+$"
+            }
+          }
+        },
+
+        "hmac": {
+          "description": "Keyed-hash message authentication code for integrity and authenticity verification.",
+          "type": "object",
+          "required": ["algorithm", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "algorithm": {
+              "type": "string",
+              "description": "HMAC algorithm used.",
+              "examples": ["hmac-sha256", "hmac-sha512"]
+            },
+            "value": {
+              "type": "string",
+              "description": "Hex-encoded HMAC value (RFC 4648 Base16).",
+              "pattern": "^[0-9a-fA-F]+$"
+            },
+            "key-id": {
+              "type": "string",
+              "description": "Identifier of the shared key used. Allows key rotation without re-signing."
+            }
+          }
+        },
+
+        "signature": {
+          "description": "Digital signature over the document per RFC 5652 (CMS). Provides non-repudiation via asymmetric key.",
+          "type": "object",
+          "required": ["algorithm", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "algorithm": {
+              "type": "string",
+              "description": "Signature algorithm.",
+              "examples": ["rsa-sha256", "ecdsa-sha256", "ed25519"]
+            },
+            "value": {
+              "type": "string",
+              "description": "Base64-encoded signature value (RFC 4648).",
+              "pattern": "^[A-Za-z0-9+/]+=*$"
+            },
+            "certificate": {
+              "type": "string",
+              "description": "Base64-encoded DER certificate of the signing entity, or a certificate reference/thumbprint."
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Trusted timestamp of the signature (RFC 3339)."
+            }
+          }
+        },
+
+        "status": {
+          "type": "string",
+          "description": "Document lifecycle status.",
+          "examples": ["draft", "final", "superseded", "cancelled", "under-review"]
+        },
+        "keywords": {
+          "type": "array",
+          "description": "Keywords or tags for cataloging and search.",
+          "items": { "type": "string" }
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject or topic of the document."
+        }
+
+      }
+    },
+
+    "classification": {
+      "description": "Security classification metadata per the FERMAT Classification Metadata Format v1.0.0.",
+      "oneOf": [
+        {
+          "type": "null",
+          "description": "Not subject to classification controls (e.g. EU documents, public data). Distinct from an explicit 'unclassified' level."
+        },
+        {
+          "type": "string",
+          "const": "unknown",
+          "description": "Classification status is indeterminate. Access control systems SHOULD deny access by default."
+        },
+        {
+          "type": "string",
+          "minLength": 1,
+          "not": { "const": "unknown" },
+          "description": "Simplified compatibility form — official marking string (e.g. 'NATO RESTRICTED'). MUST be normalized to canonical form before policy evaluation.",
+          "examples": [
+            "NATO RESTRICTED",
+            "NATO SECRET",
+            "RESTREINT UE/EU RESTRICTED",
+            "SECRET UE/EU SECRET",
+            "SECRET",
+            "TOP SECRET"
+          ]
+        },
+        {
+          "$ref": "#/$defs/classification-object"
+        }
+      ]
+    },
+
+    "classification-object": {
+      "description": "Canonical structured classification. Authorization logic MUST rely on (authority.code, level), NOT on the raw marking string.",
+      "type": "object",
+      "required": ["authority", "level", "marking"],
+      "additionalProperties": true,
+      "properties": {
+        "spec-version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Classification spec version for forward compatibility.",
+          "examples": ["1.0.0"]
+        },
+        "authority": {
+          "description": "Classifying authority. MAY be a shorthand code string or a full structured object. MUST be expanded to structured form before policy evaluation. Localized acronyms (OTAN, UE, ASE) MUST NOT be used.",
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z]{2,10}$",
+              "description": "Shorthand authority code.",
+              "examples": ["NATO", "EU", "FR", "US", "DE", "GB"]
+            },
+            {
+              "$ref": "#/$defs/authority-object"
+            }
+          ]
+        },
+        "level": {
+          "type": "string",
+          "enum": ["unclassified", "restricted", "confidential", "secret", "top_secret"],
+          "description": "Normalized classification level. Authorization logic MUST use this field, not the marking string."
+        },
+        "marking": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Official base classification marking as it appears on media. MUST NOT contain caveats.",
+          "examples": [
+            "NATO RESTRICTED",
+            "NATO CONFIDENTIAL",
+            "NATO SECRET",
+            "NATO COSMIC TOP SECRET",
+            "RESTREINT UE/EU RESTRICTED",
+            "CONFIDENTIEL UE/EU CONFIDENTIAL",
+            "SECRET UE/EU SECRET",
+            "TRÈS SECRET UE/EU TOP SECRET",
+            "SECRET",
+            "TRÈS SECRET",
+            "TOP SECRET",
+            "CONFIDENTIAL",
+            "VS-NUR FÜR DEN DIENSTGEBRAUCH",
+            "GEHEIM"
+          ]
+        },
+        "caveats": {
+          "description": "Handling restrictions and dissemination controls. MUST be uppercase. MUST NOT duplicate content already in 'marking'.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9 ,/-]*$",
+                "description": "Uppercase caveat or releasability string.",
+                "examples": [
+                  "ATOMAL",
+                  "BOHEMIA",
+                  "CCI",
+                  "CRYPTO",
+                  "KRYPTO",
+                  "COMSEC",
+                  "ORCON",
+                  "NOFORN",
+                  "PROPIN",
+                  "ACSSI",
+                  "REL TO USA, GBR, CAN, AUS, NZL",
+                  "REL NATO BEL FRA DEU",
+                  "PRS-USE",
+                  "PRS-RCV",
+                  "PRS-SUP"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+
+    "authority-object": {
+      "description": "Structured classifying authority. code MUST be ISO 3166-1 alpha-2 for countries or a registered English acronym for organizations. Localized codes (OTAN, UE, ONU) MUST NOT be used.",
+      "type": "object",
+      "required": ["code", "type", "name"],
+      "additionalProperties": true,
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z]{2,10}$",
+          "description": "Uppercase language-neutral authority code. ISO 3166-1 alpha-2 for countries; registered English acronym for organizations.",
+          "examples": ["NATO", "EU", "FR", "US", "DE", "GB", "IT", "ES", "NL"]
+        },
+        "type": {
+          "type": "string",
+          "enum": ["country", "organization"],
+          "description": "'country' uses ISO 3166-1 alpha-2. 'organization' uses registered English acronym."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Full official English name of the authority.",
+          "examples": [
+            "North Atlantic Treaty Organization",
+            "European Union",
+            "France",
+            "United States",
+            "Germany",
+            "United Kingdom"
+          ]
+        }
+      }
+    }
+
+  }
 }
